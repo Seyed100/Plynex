@@ -69,18 +69,54 @@ export const defaults: Preferences = {
 };
 // Saved files can outlive several versions or be manually edited.
 export function normalizePreferences(value: unknown): Preferences {
-  const p = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+  const p =
+    value && typeof value === "object"
+      ? (value as Record<string, unknown>)
+      : {};
   const number = (key: keyof Preferences, min: number, max: number) =>
-    typeof p[key] === 'number' && Number.isFinite(p[key]) ? Math.max(min, Math.min(max, p[key] as number)) : defaults[key] as number;
-  const boolean = (key: keyof Preferences) => typeof p[key] === 'boolean' ? p[key] as boolean : defaults[key] as boolean;
+    typeof p[key] === "number" && Number.isFinite(p[key])
+      ? Math.max(min, Math.min(max, p[key] as number))
+      : (defaults[key] as number);
+  const boolean = (key: keyof Preferences) =>
+    typeof p[key] === "boolean"
+      ? (p[key] as boolean)
+      : (defaults[key] as boolean);
   return {
-    theme: ['dark','light','system'].includes(p.theme as string) ? p.theme as Theme : defaults.theme,
-    fit: p.fit === 'cover' ? 'cover' : 'contain',
-    volume: number('volume',0,150), speed: number('speed',0.25,4),
-    subScale: number('subScale',0.5,3), subDelay: number('subDelay',-60,60), audioDelay: number('audioDelay',-60,60),
-    resume: boolean('resume'), autoplay: boolean('autoplay'), hwdec: boolean('hwdec'),
-    queue: Array.isArray(p.queue) ? p.queue.filter((m): m is Media => !!m && typeof m.path === 'string' && typeof m.name === 'string' && !m.url && !m.sample).slice(0,2000) : [],
-    positions: p.positions && typeof p.positions === 'object' ? Object.fromEntries(Object.entries(p.positions).filter(([,v])=>typeof v==='number' && Number.isFinite(v) && v>=0).slice(-2000)) : {},
+    theme: ["dark", "light", "system"].includes(p.theme as string)
+      ? (p.theme as Theme)
+      : defaults.theme,
+    fit: p.fit === "cover" ? "cover" : "contain",
+    volume: number("volume", 0, 150),
+    speed: number("speed", 0.25, 4),
+    subScale: number("subScale", 0.5, 3),
+    subDelay: number("subDelay", -60, 60),
+    audioDelay: number("audioDelay", -60, 60),
+    resume: boolean("resume"),
+    autoplay: boolean("autoplay"),
+    hwdec: boolean("hwdec"),
+    queue: Array.isArray(p.queue)
+      ? p.queue
+          .filter(
+            (m): m is Media =>
+              !!m &&
+              typeof m.path === "string" &&
+              typeof m.name === "string" &&
+              !m.url &&
+              !m.sample,
+          )
+          .slice(0, 2000)
+      : [],
+    positions:
+      p.positions && typeof p.positions === "object"
+        ? Object.fromEntries(
+            Object.entries(p.positions)
+              .filter(
+                ([, v]) =>
+                  typeof v === "number" && Number.isFinite(v) && v >= 0,
+              )
+              .slice(-2000),
+          )
+        : {},
   };
 }
 export const sampleChapters: Chapter[] = [

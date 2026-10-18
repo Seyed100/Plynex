@@ -7,9 +7,12 @@ import assert from "node:assert/strict";
 
 const dir = await mkdtemp(join(tmpdir(), "plynex-test-"));
 const windows = process.platform === "win32";
-const pipe = windows ? `\\\\.\\pipe\\plynex-verify-${process.pid}` : join(dir,"ipc.sock");
+const pipe = windows
+  ? `\\\\.\\pipe\\plynex-verify-${process.pid}`
+  : join(dir, "ipc.sock");
 const mpv = spawn(
-  process.env.MPV_PATH || (windows ? resolve("src-tauri/resources/mpv/mpv.exe") : "mpv"),
+  process.env.MPV_PATH ||
+    (windows ? resolve("src-tauri/resources/mpv/mpv.exe") : "mpv"),
   [
     "--no-config",
     "--idle=yes",
@@ -87,11 +90,7 @@ try {
     }
   });
   await rpc("set_property", "pause", true);
-  await rpc(
-    "loadfile",
-    resolve("public/quiet-horizon.mp4"),
-    "replace",
-  );
+  await rpc("loadfile", resolve("public/quiet-horizon.mp4"), "replace");
   await waitFor(
     async () => Number(await rpc("get_property", "duration")) >= 29,
   );

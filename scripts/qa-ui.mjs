@@ -3,16 +3,17 @@ import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 
 // Run after npm run dev. Uses installed Edge so no extra browser download is needed.
-const browser = await chromium.launch({ ...(process.platform === "win32" ? {channel:"msedge"} : {}), headless: true });
+const browser = await chromium.launch({
+  ...(process.platform === "win32" ? { channel: "msedge" } : {}),
+  headless: true,
+});
 const page = await browser.newPage({ viewport: { width: 1380, height: 900 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 await mkdir("output/playwright", { recursive: true });
 try {
   await page.goto("http://127.0.0.1:1420");
-  await page
-    .getByRole("button", { name: /Open a video/ })
-    .waitFor();
+  await page.getByRole("button", { name: /Open a video/ }).waitFor();
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: "output/playwright/dark.png" });
   await page.getByRole("button", { name: "Switch to light theme" }).click();
@@ -46,11 +47,9 @@ try {
   await page.screenshot({ path: "output/playwright/subtitle-settings.png" });
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Library", exact: true }).click();
-  assert(await page.getByText('Something worth watching.').isVisible());
+  assert(await page.getByText("Something worth watching.").isVisible());
   await page.getByRole("button", { name: "Home", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Try a sample", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Try a sample", exact: true }).click();
   await page.waitForFunction(
     () => document.querySelector("video").currentTime > 0.25,
   );

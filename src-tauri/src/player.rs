@@ -70,6 +70,7 @@ impl Engine {
                 "--input-cursor=no",
                 "--cursor-autohide=no",
                 "--terminal=yes",
+                "--msg-level=all=warn",
                 "--hwdec=auto-safe",
                 "--vo=gpu-next,gpu",
                 "--volume-max=150",

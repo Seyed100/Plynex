@@ -19,18 +19,18 @@ Windows engine baseline:
 
 ## Application dependencies
 
-| Dependency | License | Source |
-|---|---|---|
-| Tauri / plugins / Wry / Tao | MIT OR Apache-2.0 | https://github.com/tauri-apps/tauri |
-| React / React DOM | MIT | https://github.com/facebook/react |
-| Phosphor React icons | MIT | https://github.com/phosphor-icons/react |
-| serde / serde_json | MIT OR Apache-2.0 | https://github.com/serde-rs/serde |
-| Tokio | MIT | https://github.com/tokio-rs/tokio |
-| windows-sys | MIT OR Apache-2.0 | https://github.com/microsoft/windows-rs |
-| raw-window-handle | MIT OR Apache-2.0 OR Zlib | https://github.com/rust-windowing/raw-window-handle |
-| x11-dl | MIT | https://github.com/AltF02/x11-rs |
-| Manrope font | SIL OFL-1.1 | https://github.com/sharanda/manrope |
-| Vazirmatn font | SIL OFL-1.1 | https://github.com/rastikerdar/vazirmatn |
+| Dependency                  | License                   | Source                                              |
+| --------------------------- | ------------------------- | --------------------------------------------------- |
+| Tauri / plugins / Wry / Tao | MIT OR Apache-2.0         | https://github.com/tauri-apps/tauri                 |
+| React / React DOM           | MIT                       | https://github.com/facebook/react                   |
+| Phosphor React icons        | MIT                       | https://github.com/phosphor-icons/react             |
+| serde / serde_json          | MIT OR Apache-2.0         | https://github.com/serde-rs/serde                   |
+| Tokio                       | MIT                       | https://github.com/tokio-rs/tokio                   |
+| windows-sys                 | MIT OR Apache-2.0         | https://github.com/microsoft/windows-rs             |
+| raw-window-handle           | MIT OR Apache-2.0 OR Zlib | https://github.com/rust-windowing/raw-window-handle |
+| x11-dl                      | MIT                       | https://github.com/AltF02/x11-rs                    |
+| Manrope font                | SIL OFL-1.1               | https://github.com/sharanda/manrope                 |
+| Vazirmatn font              | SIL OFL-1.1               | https://github.com/rastikerdar/vazirmatn            |
 
 Exact direct/transitive versions are in package-lock.json and src-tauri/Cargo.lock. License texts for distributed npm/Rust dependencies are collected in LICENSES/DEPENDENCIES.txt by scripts/collect-licenses.mjs. Font license texts are retained under assets/fonts and alongside the runtime TTF. WebView2 and system WebKitGTK are platform runtimes governed by their own licenses.
 

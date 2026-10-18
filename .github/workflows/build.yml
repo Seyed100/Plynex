@@ -2,11 +2,14 @@ name: Build and test
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: plynex-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     strategy:
@@ -47,7 +50,7 @@ jobs:
       - run: node scripts/collect-licenses.mjs
       - run: npm run package -- -- --locked
         env:
-          NO_STRIP: 'true'
+          NO_STRIP: "true"
       - name: Windows portable archive
         if: runner.os == 'Windows'
         shell: pwsh
@@ -75,7 +78,8 @@ jobs:
       - name: Collect assets and checksums
         run: |
           mkdir release
-          find artifacts -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' \) -exec cp {} release/ \;
+          find artifacts -type f \( -name '*.zip' -o -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' \) -exec cp {} release/ \;
+          find artifacts -type f -name '*setup.exe' -exec cp {} "release/Plynex-${GITHUB_REF_NAME#v}-windows-x64-setup.exe" \;
           cd release
           sha256sum * > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2

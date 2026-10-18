@@ -97,7 +97,9 @@ const subtitleExtensions = [
 ];
 function localPreferences(): Preferences {
   try {
-    return normalizePreferences(JSON.parse(localStorage.getItem("plynex.preferences") || "{}"));
+    return normalizePreferences(
+      JSON.parse(localStorage.getItem("plynex.preferences") || "{}"),
+    );
   } catch {
     return defaults;
   }
@@ -130,7 +132,7 @@ export default function App() {
   const subtitleInput = useRef<HTMLInputElement>(null);
   const positionRef = useRef(prefs.positions);
   const loadedPath = useRef("");
-  const loadSequence=useRef(0);
+  const loadSequence = useRef(0);
   const initialized = useRef(false);
   const currentRef = useRef(current);
   currentRef.current = current;
@@ -186,7 +188,11 @@ export default function App() {
     void (async () => {
       const data = await invoke<Partial<Preferences>>("load_preferences");
       if (disposed) return;
-      const merged = normalizePreferences({ ...defaults, ...localPreferences(), ...data });
+      const merged = normalizePreferences({
+        ...defaults,
+        ...localPreferences(),
+        ...data,
+      });
       setPrefs(merged);
       positionRef.current = merged.positions;
       setQueue(merged.queue.filter((m) => !m.url && !m.sample));
@@ -218,12 +224,24 @@ export default function App() {
     return () => clearTimeout(id);
   }, [prefs, queue, hydrated, safe]);
   useEffect(() => {
-    if (current && state.active && (!native || state.path===current.path) && state.time > 0)
+    if (
+      current &&
+      state.active &&
+      (!native || state.path === current.path) &&
+      state.time > 0
+    )
       positionRef.current[current.path] =
         state.eof || (state.duration > 0 && state.time > state.duration - 2)
           ? 0
           : state.time;
-  }, [current, state.time, state.eof, state.active, state.path, state.duration]);
+  }, [
+    current,
+    state.time,
+    state.eof,
+    state.active,
+    state.path,
+    state.duration,
+  ]);
   useEffect(() => {
     const save = () => {
       if (!hydrated) return;
@@ -233,7 +251,8 @@ export default function App() {
         positions: positionRef.current,
       };
       localStorage.setItem("plynex.preferences", JSON.stringify(value));
-      if (native) void invoke("save_preferences", { data: value }).catch(console.error);
+      if (native)
+        void invoke("save_preferences", { data: value }).catch(console.error);
     };
     const id = setInterval(save, 5000);
     window.addEventListener("beforeunload", save);
@@ -260,7 +279,7 @@ export default function App() {
         return;
       }
       setBusy(true);
-      const sequence=++loadSequence.current;
+      const sequence = ++loadSequence.current;
       setPlaylist(false);
       setCurrent(media);
       setView("home");
@@ -270,11 +289,15 @@ export default function App() {
         : 0;
       try {
         await player.load(media, start);
-        if (start > 2 && sequence===loadSequence.current) notice(`Resumed at ${formatTime(start)}`);
+        if (start > 2 && sequence === loadSequence.current)
+          notice(`Resumed at ${formatTime(start)}`);
       } catch (e) {
-        if(sequence===loadSequence.current){notice(String(e), true);setCurrent(null);}
+        if (sequence === loadSequence.current) {
+          notice(String(e), true);
+          setCurrent(null);
+        }
       } finally {
-        if(sequence===loadSequence.current)setBusy(false);
+        if (sequence === loadSequence.current) setBusy(false);
       }
     },
     [state.ready, player.load, notice],
@@ -401,7 +424,13 @@ export default function App() {
     if (current) positionRef.current[current.path] = 0;
     if (repeat) {
       safe(player.replay());
-    } else if (prefs.autoplay && queue.length > 1 && (shuffle || queue.findIndex(m=>m.path===current?.path)<queue.length-1)) next();
+    } else if (
+      prefs.autoplay &&
+      queue.length > 1 &&
+      (shuffle ||
+        queue.findIndex((m) => m.path === current?.path) < queue.length - 1)
+    )
+      next();
   }, [
     state.eof,
     repeat,
@@ -900,7 +929,7 @@ export default function App() {
           {(busy || state.buffering) && (
             <div className="loading">
               <span />
-              {busy ? 'Opening your story…' : 'Buffering…'}
+              {busy ? "Opening your story…" : "Buffering…"}
             </div>
           )}
           {!current && (

@@ -1,10 +1,17 @@
 {
   "bundle": {
-    "targets": ["deb","rpm","appimage"],
+    "targets": ["deb", "rpm", "appimage"],
     "linux": {
-      "deb": {"depends":["mpv (>= 0.34)","libwebkit2gtk-4.1-0","libgtk-3-0","libx11-6"]},
-      "rpm": {"depends":["mpv >= 0.34","webkit2gtk4.1","gtk3","libX11"]},
-      "appimage": {"bundleMediaFramework":false}
+      "deb": {
+        "depends": [
+          "mpv (>= 0.34)",
+          "libwebkit2gtk-4.1-0",
+          "libgtk-3-0",
+          "libx11-6"
+        ]
+      },
+      "rpm": { "depends": ["mpv >= 0.34", "webkit2gtk4.1", "gtk3", "libX11"] },
+      "appimage": { "bundleMediaFramework": false }
     }
   }
 }

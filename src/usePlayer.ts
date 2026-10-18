@@ -7,7 +7,7 @@ export const native = isTauri();
 const initial: PlayerState = {
   ready: false,
   active: false,
-  path: '',
+  path: "",
   buffering: false,
   seeking: false,
   playing: false,
@@ -104,9 +104,12 @@ export function usePlayer(onError: (message: string) => void) {
                   return { ...s, aid: d };
                 case "media-title":
                   return { ...s, title: d || "" };
-                case 'path': return {...s,path:typeof d==='string'?d:''};
-                case 'paused-for-cache': return {...s,buffering:!!d};
-                case 'seeking': return {...s,seeking:!!d};
+                case "path":
+                  return { ...s, path: typeof d === "string" ? d : "" };
+                case "paused-for-cache":
+                  return { ...s, buffering: !!d };
+                case "seeking":
+                  return { ...s, seeking: !!d };
                 default:
                   return s;
               }
@@ -149,40 +152,46 @@ export function usePlayer(onError: (message: string) => void) {
 
   const applyPreferences = useCallback(
     (p: Preferences) => {
-      const task = preferenceTask.current.catch(()=>{}).then(async()=>{
-      const previous = prefsRef.current;
-      if (native) {
-        if (!previous || previous.volume !== p.volume)
-          await cmd("set_property", "volume", p.volume);
-        if (!previous || previous.speed !== p.speed)
-          await cmd("set_property", "speed", p.speed);
-        if (!previous || previous.hwdec !== p.hwdec)
-          await cmd("set_property", "hwdec", p.hwdec ? "auto-safe" : "no");
-        if (!previous || previous.subScale !== p.subScale)
-          await cmd("set_property", "sub-scale", p.subScale);
-        if (!previous || previous.subDelay !== p.subDelay)
-          await cmd("set_property", "sub-delay", p.subDelay);
-        if (!previous || previous.audioDelay !== p.audioDelay)
-          await cmd("set_property", "audio-delay", p.audioDelay);
-        if (!previous || previous.fit !== p.fit)
-          await cmd("set_property", "panscan", p.fit === "cover" ? 1 : 0);
-      } else {
-        if (video.current) video.current.playbackRate = p.speed;
-        setState((s) => ({ ...s, speed: p.speed, volume: p.volume }));
-        if (p.volume > 100 && video.current && !audioRef.current) {
-          const context=new AudioContext(), gain=context.createGain();
-          context.createMediaElementSource(video.current).connect(gain);
-          gain.connect(context.destination);
-          audioRef.current={context,gain};
-          video.current.volume=1;
-        }
-        if (audioRef.current) { audioRef.current.gain.gain.value = p.volume / 100; if(video.current)video.current.volume=1; void audioRef.current.context.resume(); }
-        else if (video.current)
-          video.current.volume = Math.min(1, p.volume / 100);
-      }
-      prefsRef.current = p;
-      });
-      preferenceTask.current=task;
+      const task = preferenceTask.current
+        .catch(() => {})
+        .then(async () => {
+          const previous = prefsRef.current;
+          if (native) {
+            if (!previous || previous.volume !== p.volume)
+              await cmd("set_property", "volume", p.volume);
+            if (!previous || previous.speed !== p.speed)
+              await cmd("set_property", "speed", p.speed);
+            if (!previous || previous.hwdec !== p.hwdec)
+              await cmd("set_property", "hwdec", p.hwdec ? "auto-safe" : "no");
+            if (!previous || previous.subScale !== p.subScale)
+              await cmd("set_property", "sub-scale", p.subScale);
+            if (!previous || previous.subDelay !== p.subDelay)
+              await cmd("set_property", "sub-delay", p.subDelay);
+            if (!previous || previous.audioDelay !== p.audioDelay)
+              await cmd("set_property", "audio-delay", p.audioDelay);
+            if (!previous || previous.fit !== p.fit)
+              await cmd("set_property", "panscan", p.fit === "cover" ? 1 : 0);
+          } else {
+            if (video.current) video.current.playbackRate = p.speed;
+            setState((s) => ({ ...s, speed: p.speed, volume: p.volume }));
+            if (p.volume > 100 && video.current && !audioRef.current) {
+              const context = new AudioContext(),
+                gain = context.createGain();
+              context.createMediaElementSource(video.current).connect(gain);
+              gain.connect(context.destination);
+              audioRef.current = { context, gain };
+              video.current.volume = 1;
+            }
+            if (audioRef.current) {
+              audioRef.current.gain.gain.value = p.volume / 100;
+              if (video.current) video.current.volume = 1;
+              void audioRef.current.context.resume();
+            } else if (video.current)
+              video.current.volume = Math.min(1, p.volume / 100);
+          }
+          prefsRef.current = p;
+        });
+      preferenceTask.current = task;
       return task;
     },
     [cmd],
@@ -199,11 +208,20 @@ export function usePlayer(onError: (message: string) => void) {
         tracks: [],
       }));
       if (native) {
-        await invoke('load_media',{path:media.path,start});
+        await invoke("load_media", { path: media.path, start });
       } else if (video.current) {
         video.current.src = media.url || media.path;
-        const element=video.current;
-        element.addEventListener('loadedmetadata',()=>{element.currentTime=Number.isFinite(element.duration) && start<element.duration-2 ? Math.max(0,start) : 0;},{once:true});
+        const element = video.current;
+        element.addEventListener(
+          "loadedmetadata",
+          () => {
+            element.currentTime =
+              Number.isFinite(element.duration) && start < element.duration - 2
+                ? Math.max(0, start)
+                : 0;
+          },
+          { once: true },
+        );
         video.current.load();
         await audioRef.current?.context.resume();
         await video.current.play();
@@ -214,8 +232,10 @@ export function usePlayer(onError: (message: string) => void) {
   );
   const toggle = useCallback(async () => {
     if (native) {
-      if (state.eof) { await cmd("seek", 0, "absolute+exact"); await cmd('set_property','pause',false); }
-      else await cmd("cycle", "pause");
+      if (state.eof) {
+        await cmd("seek", 0, "absolute+exact");
+        await cmd("set_property", "pause", false);
+      } else await cmd("cycle", "pause");
     } else if (video.current) {
       if (video.current.paused) await video.current.play();
       else video.current.pause();
@@ -278,7 +298,7 @@ export function usePlayer(onError: (message: string) => void) {
     [cmd],
   );
   const stop = useCallback(async () => {
-    if (native) await invoke('stop_media');
+    if (native) await invoke("stop_media");
     else if (video.current) {
       video.current.pause();
       video.current.removeAttribute("src");
@@ -292,7 +312,11 @@ export function usePlayer(onError: (message: string) => void) {
       speed: s.speed,
     }));
   }, [cmd]);
-  const replay=useCallback(async()=>{await seek(0);if(native)await cmd('set_property','pause',false);else await video.current?.play();},[seek,cmd]);
+  const replay = useCallback(async () => {
+    await seek(0);
+    if (native) await cmd("set_property", "pause", false);
+    else await video.current?.play();
+  }, [seek, cmd]);
   const browserEvents = {
     onTimeUpdate: () => {
       const v = video.current!;

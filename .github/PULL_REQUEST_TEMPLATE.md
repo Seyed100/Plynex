@@ -7,4 +7,3 @@ Describe the concrete trigger and before/after behavior.
 List checks run, OS/session/GPU when relevant, and remaining limitations. Include screenshots for visual changes.
 
 ## Related issue
-

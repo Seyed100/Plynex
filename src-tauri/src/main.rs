@@ -145,6 +145,7 @@ async fn screenshot(
     let dir = app
         .path()
         .picture_dir()
+        .or_else(|_| app.path().home_dir().map(|home| home.join("Pictures")))
         .map_err(|e| e.to_string())?
         .join("Plynex");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;

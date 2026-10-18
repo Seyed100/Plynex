@@ -3,7 +3,9 @@
 .seek-range {
   touch-action: none;
 }
-.video-area { background:rgba(0,0,0,.004); }
+.video-area {
+  background: rgba(0, 0, 0, 0.004);
+}
 .speed-value {
   display: inline-flex;
   align-items: center;

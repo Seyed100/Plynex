@@ -1,6 +1,9 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
-const browser = await chromium.launch({ ...(process.platform === "win32" ? {channel:"msedge"} : {}), headless: true });
+const browser = await chromium.launch({
+  ...(process.platform === "win32" ? { channel: "msedge" } : {}),
+  headless: true,
+});
 const page = await browser.newPage({ viewport: { width: 1380, height: 900 } });
 try {
   await page.goto("http://127.0.0.1:1420");

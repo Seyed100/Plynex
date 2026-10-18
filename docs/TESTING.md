@@ -2,15 +2,15 @@
 
 ## Automated checks
 
-| Check | Purpose |
-|---|---|
-| `npm run build` | TypeScript verification, runtime preparation, production Vite build. |
-| `npm run test:preferences` | Invalid, legacy and out-of-range saved preferences recover safely. |
-| `cargo test --manifest-path src-tauri/Cargo.toml --locked` | Rust compilation and native unit tests. |
-| `npm run test:engine` | Real mpv JSON IPC, MP4/H.264 sample, HEVC/MKV, VP9/WebM, MPEG-4/AVI, FLAC, Unicode paths, Persian/external subtitles, chapters, seek, 150% volume and sync. Requires ffmpeg and mpv. |
-| `npm run test:ui` | Browser UI, both themes, modal navigation, empty state, collection, seek click/drag/keyboard, speed alignment and idle chrome layout. Run Vite first; uses Edge on Windows or installed Playwright Chromium on Linux. |
-| `npm run test:native` | Actual Windows WebView2/mpv playback and controls; connect to a separately launched release app via local CDP port 9222. |
-| `node scripts/qa-linux-webdriver.mjs` | Actual Linux release WebView/mpv playback through tauri-driver, native seek, volume, subtitles, screenshots and window controls. |
+| Check                                                      | Purpose                                                                                                                                                                                                               |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run build`                                            | TypeScript verification, runtime preparation, production Vite build.                                                                                                                                                  |
+| `npm run test:preferences`                                 | Invalid, legacy and out-of-range saved preferences recover safely.                                                                                                                                                    |
+| `cargo test --manifest-path src-tauri/Cargo.toml --locked` | Rust compilation and native unit tests.                                                                                                                                                                               |
+| `npm run test:engine`                                      | Real mpv JSON IPC, MP4/H.264 sample, HEVC/MKV, VP9/WebM, MPEG-4/AVI, FLAC, Unicode paths, Persian/external subtitles, chapters, seek, 150% volume and sync. Requires ffmpeg and mpv.                                  |
+| `npm run test:ui`                                          | Browser UI, both themes, modal navigation, empty state, collection, seek click/drag/keyboard, speed alignment and idle chrome layout. Run Vite first; uses Edge on Windows or installed Playwright Chromium on Linux. |
+| `npm run test:native`                                      | Actual Windows WebView2/mpv playback and controls; connect to a separately launched release app via local CDP port 9222.                                                                                              |
+| `node scripts/qa-linux-webdriver.mjs`                      | Actual Linux release WebView/mpv playback through tauri-driver, native seek, volume, subtitles, screenshots and window controls.                                                                                      |
 
 The browser scripts import Playwright's automation API. Install its browser on Linux with `npx playwright install --with-deps chromium`. A browser-only run is insufficient to verify that the native video host is visible.
 
@@ -23,7 +23,7 @@ npm run test:native
 Remove-Item Env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS
 ```
 
-Linux native automation uses `cargo install tauri-driver --locked`, the `webkit2gtk-driver` package, a display and compositor. Set `PLYNEX_BINARY` to the release executable, start `tauri-driver`, then run the script. Root-only CI containers may need `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1`; do not use this setting for normal desktop sessions.
+Linux native automation uses `cargo install tauri-driver --locked`, the `webkit2gtk-driver` package, Python Pillow for a desktop capture, a display and compositor. With Xvfb/Openbox, use client compositing (`xcompmgr -n`); server automatic mode (`-a`) does not reliably compose transparent windows. Set `TAURI_WEBVIEW_AUTOMATION=true` before starting `tauri-driver`, set `DISPLAY` and `PLYNEX_BINARY`, then run the script. Root-only CI containers may need `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1`; do not use this setting for normal desktop sessions.
 
 ## Build packages
 

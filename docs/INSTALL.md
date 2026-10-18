@@ -7,7 +7,7 @@ Compare the file's SHA-256 with `SHA256SUMS.txt` in the same release.
 
 1. Download `Plynex-0.2.0-windows-x64-setup.exe` and run it. Installation is per user; administrator rights are normally unnecessary.
 2. Allow the Microsoft WebView2 runtime installation if it is missing.
-3. Launch Plynex. The first launch downloads the pinned mpv engine directly from its upstream GitHub release and verifies the archive's SHA-256 before extraction. Keep your internet connection available until **Native playback · mpv** appears. The engine download is approximately 120 MB; startup time depends on the connection.
+3. Launch Plynex. The first launch downloads the pinned mpv engine directly from its upstream GitHub release and verifies the archive's SHA-256 before extraction. Keep your internet connection available until **Native playback is ready** appears. The archive is approximately 34 MB (about 125 MB extracted); startup time depends on the connection.
 4. Choose **Open a video**, drag a media file onto the window, or try the bundled sample.
 
 The portable ZIP is an alternative: extract the **entire** archive, then run `Plynex.exe`. Keep `runtime/` and `WebView2Loader.dll` (when present) beside the executable. The engine and preferences are stored in the current user's profile, so portable refers to the application folder, not a fully self-contained profile.
@@ -73,6 +73,7 @@ The RPM is built as a convenience artifact. The primary Linux runtime validation
 - **No audio:** verify the OS output device, volume, mute, and selected audio track. Volume above 100% can clip already loud material.
 - **Unreadable subtitles:** prefer UTF-8 SRT/ASS. Vazirmatn is bundled for Persian/Arabic shaping; font rendering also depends on libass and the file.
 - **Bad saved settings:** quit the app and rename `preferences.json` in the config folder. Windows: `%APPDATA%\studio.plynex.player`; Linux: `$XDG_CONFIG_HOME/studio.plynex.player` or `~/.config/studio.plynex.player`.
+- **Engine diagnostics:** the most recent startup/playback log is `mpv.log` in the application's log directory (typically `%LOCALAPPDATA%\studio.plynex.player\logs` on Windows or `~/.local/share/studio.plynex.player/logs` on Linux). The startup error displays its exact path. Logs may contain local media paths; redact them before sharing.
 - **Missing or unsupported codec:** format coverage depends on mpv/FFmpeg and your platform. DRM-protected, corrupt, and some proprietary files are outside the supported scope.
 
 ## Uninstall
