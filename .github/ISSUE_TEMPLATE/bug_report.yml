@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a reproducible playback or UI problem.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include whether the bundled sample is affected. Do not upload private or copyrighted films.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Plynex version, OS/version, X11/Wayland session, GPU/driver, codec/container, hardware decoding setting and mpv version.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or diagnostic details
+      description: Redact personal paths, credentials and private content.
