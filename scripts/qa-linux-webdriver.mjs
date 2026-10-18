@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
 const base=process.env.WEBDRIVER_URL || 'http://127.0.0.1:4444';
 let session;
 async function request(method,path,data) {
@@ -16,7 +17,7 @@ async function invoke(command,args={}) {
 }
 const property=name=>invoke('player_command',{command:['get_property',name]});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function waitFor(fn,description) {for(let i=0;i<100;i++){if(await fn())return;await sleep(100);}throw Error('Timed out: '+description);}
+async function waitFor(fn,description) {let last;for(let i=0;i<200;i++){try{if(await fn())return;}catch(e){last=e;}await sleep(100);}throw Error('Timed out: '+description+' '+(last || ''));}
 async function click(selector) {await script('document.querySelector(arguments[0]).click()', [selector]);}
 try {
   const created=await request('POST','/session',{capabilities:{alwaysMatch:{'tauri:options':{application:process.env.PLYNEX_BINARY || '/root/plynex-target/release/plynex'}}}});
@@ -36,6 +37,14 @@ try {
   await invoke('player_command',{command:['set_property','speed',1.5]});assert.equal(await property('speed'),1.5);
   await invoke('player_command',{command:['seek',3,'absolute+exact']});
   const frame=await invoke('screenshot');assert((await fs.stat(frame)).size>1000);
+  await fs.mkdir('output/playwright',{recursive:true});
+  await sleep(300);
+  execFileSync('python3',['-c',`from PIL import ImageGrab,ImageStat
+im=ImageGrab.grab(xdisplay='${process.env.DISPLAY || ':99'}')
+im.save('output/playwright/linux-desktop.png')
+w,h=im.size
+assert max(ImageStat.Stat(im.crop((w//3,h//3,w*2//3,h*2//3))).stddev)>15, 'Native video must be visible through the WebView'
+`]);
   await click('[aria-label="Switch to light theme"]');
   assert.equal(await script('return document.documentElement.dataset.theme'),'light');
   await click('[aria-label="Switch to dark theme"]');

@@ -8,7 +8,9 @@ New-Item -ItemType Directory -Force -Path $portableDir | Out-Null
 Copy-Item -LiteralPath (Join-Path $ReleaseDirectory 'plynex.exe') -Destination (Join-Path $portableDir 'Plynex.exe') -Force
 $loader = Join-Path $ReleaseDirectory 'WebView2Loader.dll'
 if (Test-Path -LiteralPath $loader) { Copy-Item -LiteralPath $loader -Destination $portableDir -Force }
-Copy-Item -LiteralPath (Join-Path $projectRoot 'src-tauri/resources/runtime') -Destination $portableDir -Recurse -Force
+$runtimeDir = Join-Path $portableDir 'runtime'
+New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
+Copy-Item -Path (Join-Path $projectRoot 'src-tauri/resources/runtime/*') -Destination $runtimeDir -Recurse -Force
 foreach ($document in @('LICENSE','THIRD_PARTY_NOTICES.md','README.md')) {
     Copy-Item -LiteralPath (Join-Path $projectRoot $document) -Destination $portableDir -Force
 }

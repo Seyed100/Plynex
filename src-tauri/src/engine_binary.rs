@@ -49,3 +49,19 @@ pub async fn locate(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String
 pub async fn locate(_app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
     Ok(std::path::PathBuf::from("mpv"))
 }
+pub fn runtime_dir(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+    use tauri::Manager;
+    let directory = app
+        .path()
+        .resource_dir()
+        .map_err(|e| e.to_string())?
+        .join("runtime");
+    if directory.is_dir() {
+        return Ok(directory);
+    }
+    let executable = std::env::current_exe().map_err(|e| e.to_string())?;
+    Ok(executable
+        .parent()
+        .ok_or("Executable directory missing")?
+        .join("runtime"))
+}

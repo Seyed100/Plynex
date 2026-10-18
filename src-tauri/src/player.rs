@@ -52,11 +52,7 @@ impl Engine {
         let endpoint = crate::ipc::Endpoint::create()?;
         let pipe = endpoint.path.to_string_lossy().into_owned();
         let generation = self.generation.fetch_add(1, Ordering::SeqCst) + 1;
-        let fonts = app
-            .path()
-            .resource_dir()
-            .map_err(|e| e.to_string())?
-            .join("runtime/fonts");
+        let runtime = crate::engine_binary::runtime_dir(&app)?;
         let log_dir = app.path().app_log_dir().map_err(|e| e.to_string())?;
         std::fs::create_dir_all(&log_dir).map_err(|e| e.to_string())?;
         let log_path = log_dir.join("mpv.log");
@@ -92,7 +88,7 @@ impl Engine {
                 "--save-position-on-quit=no",
                 "--audio-display=no",
             ])
-            .arg(format!("--sub-fonts-dir={}", fonts.display()))
+            .arg(format!("--config-dir={}", runtime.display()))
             .arg(format!("--wid={}", self.host.load(Ordering::Relaxed)))
             .arg(format!("--input-ipc-server={pipe}"))
             .stdin(Stdio::null())
@@ -104,7 +100,7 @@ impl Engine {
         #[cfg(windows)]
         process.arg("--gpu-api=d3d11").creation_flags(0x08000000);
         #[cfg(target_os = "linux")]
-        process.arg("--gpu-context=x11egl");
+        process.args(["--gpu-context=x11egl", "--vo=gpu-next,gpu,x11"]);
         let child = process
             .spawn()
             .map_err(|e| format!("Could not start the playback engine: {e}"))?;

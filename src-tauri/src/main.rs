@@ -81,12 +81,7 @@ fn video_bounds(
 
 #[tauri::command]
 fn sample_media(app: tauri::AppHandle) -> Result<String, String> {
-    let path = app
-        .path()
-        .resource_dir()
-        .map_err(|e| e.to_string())?
-        .join("runtime")
-        .join("quiet-horizon.mp4");
+    let path = crate::engine_binary::runtime_dir(&app)?.join("quiet-horizon.mp4");
     if path.exists() {
         Ok(path.to_string_lossy().into_owned())
     } else {
